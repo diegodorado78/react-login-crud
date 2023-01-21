@@ -11,6 +11,8 @@ export default function Items() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsNumber, setItemsNumber] = useState(0);
   const [serialNumber, setSerialNumber] = useState('');
+  const [isDeleted, setIsDeleted] = useState(false);
+
   const navigate = useNavigate();
   const [pageState, setPageState] = useState({
     itemsArray: [],
@@ -26,7 +28,7 @@ export default function Items() {
     } else {
       itemsServices.getBySerial(serialNumber).then(onGetBySerialSuccess).catch(onGetBySerialError)
     }
-  }, [currentPage, serialNumber])
+  }, [currentPage, serialNumber, isDeleted])
 
   const onGetAllSuccess = (res) => {
     const arrayNew = res.items
@@ -38,13 +40,13 @@ export default function Items() {
     })
   }
 
-  const onGetAllError = (err) => { console.log(err); }
+  const onGetAllError = (err) => { console.error(err); }
   const onGetAllNumberSuccess = (res) => {
     return setItemsNumber(res.total)
   }
 
   const onGetAllNumberError = (err) => {
-    console.log(err)
+    console.error(err)
   }
   //ISOLATED METHODS
   const pagOnChange = (current) => { setCurrentPage(current) }
@@ -61,20 +63,20 @@ export default function Items() {
       return pd;
     })
   }
+
   const onGetBySerialError = (err) => {
-    console.log(err);
+    console.error(err);
   }
   //EDITING A ITEM
   const onEditRequest = useCallback((itemObj) => {
-    console.log(itemObj);
-    const stateForTransport = { type: "ITEM_VIEW", payload: itemObj }; //good code practice
-    navigate(`/items/${itemObj.id}`, { state: stateForTransport }); //pass the friendObj to (state) that belongs to navigation hook (Navigate.context.navegator.state)
+    const stateForTransport = { type: "ITEM_VIEW", payload: itemObj };
+    navigate(`/items/${itemObj.id}`, { state: stateForTransport });
 
   });
   //DELETING AN ITEM
   const onDeleteRequested = useCallback((itemObj) => {
     const successHandler = getDeleteSuccessHandler(itemObj.id);
-    itemsServices.deleteById(itemObj.id).then(successHandler).catch(onDeleteError);//USING CURRYING TO REMAP THE COMP ONLY ON DELETING SUCCESS
+    itemsServices.deleteById(itemObj.id).then(successHandler).catch(onDeleteError);
   }, []);
 
   const getDeleteSuccessHandler = (idToDelete) => {
@@ -87,20 +89,27 @@ export default function Items() {
         pd.itemsComponents = pd.itemsArray.map(mapItem)
         return pd
       })
+      setIsDeleted((prev) => !prev)
     }
   }
+
   const onDeleteError = (err) => {
-    console.log(err);
+    console.error(err);
   }
   return (
     <>
       <div className='sm:w-10/12 bg-white mx-auto'>
         <div className="flex flex-row justify-between ">
-          <img className="w-48 h-32 " src={enerbitLogo} alt="" />
+          <img onClick={() => navigate('/items')} className="w-48 h-32 " src={enerbitLogo} alt="" />
           <button onClick={() => navigate('/items/new')} className='text-white bg-orange-500 rounded-lg px-4 h-10 py-1 my-auto mx-2 '> Add Product</button>
         </div>
+
         <h3 className=' sm:text-left font-bold'>Welcome, you are logged as Administrator</h3>
-        <input onChange={(e) => setSerialNumber(e.target.value)} className='p-2 w-10/12 m-4  rounded outline outline-2 outline-purple-800 ' type="text" placeholder='Find product by serial ' />
+        <div className='flex flex-row content-center'>
+          <p className='my-auto text-purple-800 font-bold'>Search bar</p>
+          <input onChange={(e) => setSerialNumber(e.target.value)} className='p-2 w-10/12 m-4  rounded outline outline-2 outline-purple-800 ' type="text" placeholder='Find product by serial ' />
+        </div>
+
         {pageState.itemsArray.length > 0 && !serialNumber &&
           <Pagination
             total={itemsNumber}

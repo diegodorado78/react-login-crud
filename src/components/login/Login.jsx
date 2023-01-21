@@ -21,7 +21,7 @@ export default function Login({ setToken }) {
   setToken(res)
  }
  const onLoginError = (err) => {
-  console.log(err);
+  console.error(err);
  }
 
  const { handleSubmit, handleChange, errors } = useFormik({

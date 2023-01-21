@@ -12,7 +12,6 @@ function App() {
   if (!token) {
     return <Login setToken={setToken} />;
   }
-
   return (
     <React.Fragment>
       <Routes>
@@ -24,6 +23,4 @@ function App() {
     </React.Fragment>
   );
 }
-
 export default App;
-//className="App">

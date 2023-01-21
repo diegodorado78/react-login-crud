@@ -1,21 +1,21 @@
-import React, { useState, useRef, Fragment } from 'react'
+import React, { useState, Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
 function ProductItem(props) {
   const [viewOpen, setViewOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
-  const cancelButtonRef = useRef(null)
-  const editButtonRef = useRef(null)
+
   const onLocalEditClicked = (ejob) => {
     ejob.preventDefault();
     props.onEditClicked(props.itemObj);
   };
   const onLocalDeleteClicked = (event) => {
     event.preventDefault()
+    // setDeleteOpen(false);
     props.onDeleteClicked(props.itemObj);
   }
   return (
-    <div>
+    <div >
       <div className='flex flex-row justify-between  w-full my-3  hover:outline  hover:outline-1 hover:rounded-lg hover:outline-orange-400'>
         <a className="w-full cursor-pointer" onClick={() => setViewOpen(true)} >
           <div className="item-body  text-left flex-col ">
@@ -36,7 +36,7 @@ function ProductItem(props) {
       <hr />
       {/* MODAL CARD */}
       <Transition.Root show={viewOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setViewOpen}>
+        <Dialog as="div" className="relative z-10" onClose={setViewOpen}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -74,6 +74,7 @@ function ProductItem(props) {
                           <p > <strong>Condition: </strong>{props.itemObj.condition}</p>
                           <p > <strong>Owner: </strong>{props.itemObj.owner}</p>
                           <p > <strong>Location: </strong>{props.itemObj.location}</p>
+                          <p > <strong>Purchase Date: </strong>{props.itemObj.purchase}</p>
                           <p > <strong>I B: </strong>{props.itemObj.i_b}</p>
                           <p > <strong>I Max : </strong>{props.itemObj.i_max}</p>
                           <p > <strong>I N: </strong>{props.itemObj.i_n}</p>
@@ -82,7 +83,7 @@ function ProductItem(props) {
                       </div>
                     </div>
                   </div>
-                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <div className=" px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                     <button
                       type="button"
                       className="inline-flex w-full justify-center outline-0 rounded-md bg-red-600 px-4 py-2 text-base font-medium text-white  hover:bg-red-700  sm:ml-3 sm:w-auto sm:text-sm"
@@ -94,7 +95,6 @@ function ProductItem(props) {
                       type="button"
                       className="inline-flex w-full justify-center outline-0 rounded-md bg-amber-400 px-4 py-2 text-base font-medium text-white hover:bg-amber-500  sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                       onClick={onLocalEditClicked}
-                      ref={editButtonRef}
                     >
                       Edit
                     </button>
@@ -108,7 +108,7 @@ function ProductItem(props) {
 
       {/* DELETE CARD  MODAL*/}
       <Transition.Root show={deleteOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setDeleteOpen}>
+        <Dialog as="div" className="relative z-10" onClose={setDeleteOpen}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -138,7 +138,7 @@ function ProductItem(props) {
                       <p> Do you really  want to delete this item?</p>
                     </Dialog.Title>
                   </div>
-                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <div className=" px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                     <button
                       type="button"
                       className="inline-flex w-full  outline-0 rounded-md  bg-green-600 px-4 py-2 text-white hover:bg-green-700 sm:ml-3 sm:w-auto sm:text-sm"
@@ -150,7 +150,6 @@ function ProductItem(props) {
                       type="button"
                       className="inline-flex w-full outline-0 rounded-md  bg-red-600 px-4 py-2 text-white hover:bg-red-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                       onClick={() => setDeleteOpen(false)}
-                      ref={cancelButtonRef}
                     >
                       No
                     </button>
